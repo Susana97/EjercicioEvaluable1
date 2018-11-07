@@ -30,6 +30,7 @@ public class Interfaz extends javax.swing.JFrame {
      */
     public Interfaz() {
         initComponents();
+        setDefaultCloseOperation(0);
     }
 
     /**
@@ -90,6 +91,7 @@ public class Interfaz extends javax.swing.JFrame {
         jButtonGuardarFichero = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabelNombreCl.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -830,7 +832,18 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
     private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
-        System.exit(0);
+        if (listaVentas.size() > 0) {//si hay clientes en memoria que no han sido guardados.
+            int res = JOptionPane.showConfirmDialog(null, "Hay ventas sin guardar \n"
+                    + "¿Desea salir de todas formas?", "Ventas sin guardar",
+                    JOptionPane.YES_NO_OPTION);
+            if (res == 0) {//SI
+                System.exit(0);
+            } else {
+                jTextFieldNombreCl.grabFocus();
+            }
+        }else{
+          System.exit(0);  
+        }
     }//GEN-LAST:event_jButtonSalirActionPerformed
 
     private void jTextFieldNombreClKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldNombreClKeyPressed
@@ -1229,35 +1242,40 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonGuardarFicheroActionPerformed
 
     private void jButtonMostrarFicheroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMostrarFicheroActionPerformed
-       /*OperacionesFicheros.leerFicheroVentas(fichero);
-       listaVentas = OperacionesFicheros.getVentas();
-       listaNombres = OperacionesFicheros.getNombres();
-       
-       mostrarEncontradasFichero(0);
-        for (int i = 1; i < listaVentas.size(); i++) {
-            if (i < listaVentas.size()) {
-                int res = JOptionPane.showConfirmDialog(null, "Se ha encontrado mas de una venta, \n"
+        OperacionesFicheros.guardarContenidoFicheroEnArrays(fichero);
+        if(OperacionesFicheros.getNombres().size()==0){//si el fichero está vacío
+            JOptionPane.showMessageDialog(null, "No hay información que mostrar",
+                        "Falta Información", JOptionPane.ERROR_MESSAGE);
+        }else if(OperacionesFicheros.getNombres().size()==1){//si solo hay una venta
+            mostrarEncontradasFichero(OperacionesFicheros.getVentas(), OperacionesFicheros.getNombres(), 0);
+            //muestra la venta de los arrays leidos en la otra clase.
+        }else{
+            mostrarEncontradasFichero(OperacionesFicheros.getVentas(),OperacionesFicheros.getNombres(), 0);
+            for(int i=1; i<OperacionesFicheros.getVentas().size(); i++){
+                if(i<OperacionesFicheros.getVentas().size()){
+                    int res = JOptionPane.showConfirmDialog(null, "Se ha encontrado mas de una venta, \n"
                         + "¿Desea visualizar las demás ventas?", "Múltiples Clientes",
-                        JOptionPane.YES_NO_CANCEL_OPTION);
-                if (res == 0) {//SI
-                    mostrarEncontradasFichero(i);
-                    JListClientes.setListData(listaNombres);
+                        JOptionPane.YES_NO_OPTION);
+                    if (res == 0) {//SI
+                        mostrarEncontradasFichero(OperacionesFicheros.getVentas(),OperacionesFicheros.getNombres(), i);
+                        jTextFieldNombreCl.grabFocus();
+                    }else{
+                        jTextFieldNombreCl.grabFocus();
+                        break;
+                    }
                 }
-            } else {
-                mostrarEncontradasFichero(i);
             }
-        }*/
-
+        }
     }//GEN-LAST:event_jButtonMostrarFicheroActionPerformed
 
-    private void mostrarEncontradasFichero(ArrayList<Venta> ArrayLVentas, int i){
-        /*try {
+    private void mostrarEncontradasFichero(ArrayList<Venta> ArrayLVentas, Vector vectorNombres, int i){
+        try {
             //NOMBRE
-            jTextFieldNombreCl.setText((String) listaNombres.get(i));
+            jTextFieldNombreCl.setText((String) vectorNombres.get(i));
             //LOCALIDAD
-            jComboBoxLocalidad.setSelectedIndex(listaVentas.get(i).getLocalidad());
+            jComboBoxLocalidad.setSelectedIndex(ArrayLVentas.get(i).getLocalidad());
             //SWITCH PROCESADOR
-            switch (listaVentas.get(i).getProcesador()) {
+            switch (ArrayLVentas.get(i).getProcesador()) {
                 case 0:
                     jRadioButtonIntel.setSelected(true);
                     break;
@@ -1272,7 +1290,7 @@ public class Interfaz extends javax.swing.JFrame {
                     break;
             }
             //SWITCH MEMORIA
-            switch (listaVentas.get(i).getMemoria()) {
+            switch (ArrayLVentas.get(i).getMemoria()) {
                 case 0:
                     jRadioButton8GB.setSelected(true);
                     break;
@@ -1287,7 +1305,7 @@ public class Interfaz extends javax.swing.JFrame {
                     break;
             }
             //SWITCH MONITOR
-            switch (listaVentas.get(i).getMonitor()) {
+            switch (ArrayLVentas.get(i).getMonitor()) {
                 case 0:
                     jRadioButton15.setSelected(true);
                     break;
@@ -1302,7 +1320,7 @@ public class Interfaz extends javax.swing.JFrame {
                     break;
             }
             // SWITCH DISCO DURO
-            switch (listaVentas.get(i).getDiscoDuro()) {
+            switch (ArrayLVentas.get(i).getDiscoDuro()) {
                 case 0:
                     jRadioButton1TB.setSelected(true);
                     break;
@@ -1317,32 +1335,30 @@ public class Interfaz extends javax.swing.JFrame {
                     break;
             }
             //IF WINDOWS 10
-            if (listaVentas.get(i).isWindows10()) {
+            if (ArrayLVentas.get(i).isWindows10()) {
                 jCheckBoxWin.setSelected(true);
             } else {
                 jCheckBoxWin.setSelected(false);
             }
             //IF LECTOR DVD
-            if (listaVentas.get(i).isLectorDvd()) {
+            if (ArrayLVentas.get(i).isLectorDvd()) {
                 jCheckBoxDvd.setSelected(true);
             } else {
                 jCheckBoxDvd.setSelected(false);
             }
             //IF WIFI
-            if (listaVentas.get(i).isWifi()) {
+            if (ArrayLVentas.get(i).isWifi()) {
                 jCheckBoxwifi.setSelected(true);
             } else {
                 jCheckBoxwifi.setSelected(false);
             }
             //IF BACKUP RESTORE
-            if (listaVentas.get(i).isBackupRestore()) {
+            if (ArrayLVentas.get(i).isBackupRestore()) {
                 jCheckBoxback.setSelected(true);
             } else {
                 jCheckBoxback.setSelected(false);
             }
-        } catch (Exception e) {
-
-        }*/
+        } catch (Exception e) {}
     }
     
     /**

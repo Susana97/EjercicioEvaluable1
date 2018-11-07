@@ -1,6 +1,7 @@
 package Ficheros;
 
 import ejercicioevaluable1.Venta;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -18,18 +19,46 @@ public class OperacionesFicheros {
     private static ArrayList <Venta> ventas = new ArrayList<Venta>();
 
     
-    public static void guardarVentasEnFichero(String fichero, ArrayList<Venta> ventas,Vector nombres) {
+    public static void guardarVentasEnFichero(String fichero, ArrayList<Venta> ventasMem,Vector nombresMem) {
         //guardamos las ventas del array de ventas en el fichero.
         try {
-            salida = new ObjectOutputStream(new FileOutputStream(fichero, true));
-            salida.writeObject(nombres);
-            salida.writeObject(ventas);
+            File file = new File(fichero);
+            if (file.exists()) {
+                Vector nombresProv = new Vector();
+                ArrayList<Venta> ventasProv = new ArrayList<Venta>();
+                entrada = new ObjectInputStream(new FileInputStream(fichero));
+                nombresProv.addAll((Vector<String>) entrada.readObject());
+                ventasProv.addAll((ArrayList<Venta>) entrada.readObject());
+
+                for (int i = 0; i < ventasMem.size(); i++) {
+                    nombresProv.add(nombresMem.get(i));
+                    ventasProv.add(ventasMem.get(i));
+                }
+
+                salida = new ObjectOutputStream(new FileOutputStream(fichero));
+                salida.writeObject(nombresProv);
+                salida.writeObject(ventasProv);
+            } else {
+                salida = new ObjectOutputStream(new FileOutputStream(fichero, true));
+                salida.writeObject(nombresMem);
+                salida.writeObject(ventasMem);
+            }
+            
         } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
         } catch (IOException ex) {
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
         } finally {
             if (salida != null) {
                 try {
                     salida.close();
+                } catch (IOException ex) {
+                }
+            }
+            if (entrada != null) {
+                try {
+                    entrada.close();
                 } catch (IOException ex) {
                 }
             }
@@ -39,8 +68,8 @@ public class OperacionesFicheros {
     public static void guardarContenidoFicheroEnArrays(String fichero){
         try {
             entrada = new ObjectInputStream(new FileInputStream(fichero));
-            nombres.addAll((Vector<String>)entrada.readObject());
-            ventas.addAll((ArrayList<Venta>) entrada.readObject());
+            nombres = (Vector<String>)entrada.readObject();
+            ventas = (ArrayList<Venta>) entrada.readObject();
         } catch (FileNotFoundException ex) {
         } catch (IOException ex) {
         } catch (ClassNotFoundException ex) {
