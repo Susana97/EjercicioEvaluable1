@@ -23,7 +23,7 @@ public class Interfaz extends javax.swing.JFrame {
     private ArrayList<Venta> listaVentas = new ArrayList<Venta>();
     private ArrayList<Venta> ventasEncontradas = new ArrayList<Venta>();
     private int encontrada = 0;
-    private String fichero = "D:\\ventas.dat";
+    private String fichero = "ventas.dat";
 
     /**
      * Creates new form Interfaz
@@ -1167,13 +1167,20 @@ public class Interfaz extends javax.swing.JFrame {
     }//GEN-LAST:event_JListClientesFocusGained
 
     private void jButtonGuardarFicheroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarFicheroActionPerformed
-        if (listaNombres.size() == 0) {//si no hay nada que guardar
-           JOptionPane.showMessageDialog(null, "No hay información que guardar",
+        if(listaVentas.size() == 0){//si no hay ventas que guardar.
+            JOptionPane.showMessageDialog(null, "No hay información que guardar",
                         "Falta Información", JOptionPane.ERROR_MESSAGE);
-        } else {
-            OperacionesFicheros.guardarVentas(fichero, listaVentas, listaNombres);
-            OperacionesFicheros.leerFicheroVentas(fichero);
+        }else{
+            System.out.println("*******************ArrayVentas*********************");
+            for(int i=0; i<listaVentas.size(); i++){
+                System.out.println(listaNombres.get(i) + " -> " + listaVentas.get(i));
+            }
+            System.out.println("****************************************************");
             
+            OperacionesFicheros.guardarVentasEnFichero(fichero, listaVentas, listaNombres);
+            OperacionesFicheros.guardarContenidoFicheroEnArrays(fichero);
+            listaVentas.removeAll(listaVentas);
+            listaNombres.removeAll(listaNombres);
             try {
                 jButtonAniadir.setEnabled(false);
                 jButtonBuscar.setEnabled(false);
@@ -1216,19 +1223,13 @@ public class Interfaz extends javax.swing.JFrame {
                 BotonAnterior.setVisible(false);
                 jTextFieldNombreCl.setText("");
                 JListClientes.clearSelection();
-                JListClientes.removeSelectionInterval( 0, listaNombres.size());
-                
-                
-                listaVentas.removeAll(listaVentas);
-                listaNombres.removeAll(listaNombres);
-            } catch (Exception e) {
-
-            }
+                JListClientes.setListData(listaNombres);
+            } catch (Exception e) {}
         }
     }//GEN-LAST:event_jButtonGuardarFicheroActionPerformed
 
     private void jButtonMostrarFicheroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMostrarFicheroActionPerformed
-       OperacionesFicheros.leerFicheroVentas(fichero);
+       /*OperacionesFicheros.leerFicheroVentas(fichero);
        listaVentas = OperacionesFicheros.getVentas();
        listaNombres = OperacionesFicheros.getNombres();
        
@@ -1245,12 +1246,12 @@ public class Interfaz extends javax.swing.JFrame {
             } else {
                 mostrarEncontradasFichero(i);
             }
-        }
+        }*/
 
     }//GEN-LAST:event_jButtonMostrarFicheroActionPerformed
 
-    private void mostrarEncontradasFichero(int i){
-        try {
+    private void mostrarEncontradasFichero(ArrayList<Venta> ArrayLVentas, int i){
+        /*try {
             //NOMBRE
             jTextFieldNombreCl.setText((String) listaNombres.get(i));
             //LOCALIDAD
@@ -1341,7 +1342,7 @@ public class Interfaz extends javax.swing.JFrame {
             }
         } catch (Exception e) {
 
-        }
+        }*/
     }
     
     /**

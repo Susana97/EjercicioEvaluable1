@@ -18,55 +18,45 @@ public class OperacionesFicheros {
     private static ArrayList <Venta> ventas = new ArrayList<Venta>();
 
     
-    public static void guardarVentas(String fichero, ArrayList<Venta> ventas, 
-            Vector nombres) {
+    public static void guardarVentasEnFichero(String fichero, ArrayList<Venta> ventas,Vector nombres) {
         //guardamos las ventas del array de ventas en el fichero.
         try {
-            salida = new ObjectOutputStream(new FileOutputStream(fichero));
+            salida = new ObjectOutputStream(new FileOutputStream(fichero, true));
             salida.writeObject(nombres);
             salida.writeObject(ventas);
         } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
         } catch (IOException ex) {
-            ex.printStackTrace();
         } finally {
             if (salida != null) {
                 try {
                     salida.close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
                 }
             }
         }
     }
     
-    public static void leerFicheroVentas(String fichero){
+    public static void guardarContenidoFicheroEnArrays(String fichero){
         try {
             entrada = new ObjectInputStream(new FileInputStream(fichero));
-            
-            //while(true){
-                nombres.addAll((Vector<String>)entrada.readObject());
-                ventas.addAll((ArrayList<Venta>) entrada.readObject());
-            //}
+            nombres.addAll((Vector<String>)entrada.readObject());
+            ventas.addAll((ArrayList<Venta>) entrada.readObject());
         } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
         } catch (IOException ex) {
-            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
         } finally {
             if (entrada != null) {
                 try {
                     entrada.close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
                 }
             }
         }
-        
+        System.out.println("**************VENTAS********************");
         for(int i=0; i<ventas.size(); i++){
             System.out.println( nombres.get(i) + " -> " + ventas.get(i));
         }
+        System.out.println("****************************************");
     }
 
     public static ArrayList<Venta> getVentas() {
